@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+             android:orientation="vertical"
+             android:layout_width="match_parent"
+             android:layout_height="match_parent">
+
+    <TextView
+            android:id="@+id/consoleText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="top"
+            android:lines="4"
+            android:scrollbars="vertical"
+            android:textSize="16sp"
+            android:text="Gib hier deinen Text ein"/>
+    <Button
+            android:text="start scan"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" android:id="@+id/startScanButton"/>
+    <Button
+            android:text="stop scan"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" android:id="@+id/stopScanButton"/>
+    <Button
+            android:text="connect"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" android:id="@+id/connectButton"/>
+    <Button
+            android:text="disconnect"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" android:id="@+id/disconnectButton"/>
+    <TextView
+            android:id="@+id/devicesText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="top"
+            android:lines="4"
+            android:scrollbars="vertical"
+            android:textSize="16sp"
+            android:text="Gib hier deinen Text ein"/>
+    <TextView
+            android:id="@+id/peripheralText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="top"
+            android:lines="16"
+            android:scrollbars="vertical"
+            android:textSize="16sp"
+            android:text="Gib hier deinen Text ein"/>
+</LinearLayout>
