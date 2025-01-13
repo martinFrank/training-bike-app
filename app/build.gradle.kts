@@ -35,6 +35,7 @@ android {
     }
     buildFeatures {
         compose = true
+        viewBinding = true
     }
     composeOptions {
         kotlinCompilerExtensionVersion = "1.5.1"
@@ -58,6 +59,12 @@ dependencies {
     implementation(libs.androidx.material3)
     // https://mvnrepository.com/artifact/dev.bluefalcon/blue-falcon-android
     implementation(libs.blue.falcon.android.v222)
+    implementation(libs.androidx.recyclerview)
+    implementation(libs.material)
+    implementation(libs.androidx.appcompat)
+    implementation(libs.androidx.constraintlayout)
+    implementation(libs.androidx.navigation.fragment.ktx)
+    implementation(libs.androidx.navigation.ui.ktx)
     //implementation(libs.blue.falcon.android)
     //debugImplementation(libs.blue.falcon.android.debug)
     debugImplementation(libs.androidx.ui.test.manifest)

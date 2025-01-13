@@ -2,9 +2,9 @@ package com.github.martinfrank.sport.trainingbikeapp
 
 import android.annotation.SuppressLint
 import android.bluetooth.BluetoothAdapter
-import android.bluetooth.BluetoothDevice
 import android.bluetooth.BluetoothManager
 import android.content.Context
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Bundle
 import android.widget.Button
@@ -13,6 +13,8 @@ import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import dev.bluefalcon.*
 import java.util.*
 
@@ -22,20 +24,30 @@ class MainActivity : BlueFalconDelegate, ComponentActivity() {
     private lateinit var devicesText: TextView
     private lateinit var peripheralText: TextView
     private lateinit var blueFalcon: BlueFalcon
-    private var devices = listOf<BluetoothDevice>()
-    private lateinit var trainingBike: BluetoothPeripheral
+    private var peripherals = listOf<BluetoothPeripheral>()
+    private lateinit var recyclerView: RecyclerView
+    private lateinit var recyclerViewAdapter: MyAdapter
+    private var uuidPattern = "[A-F0-9][A-F0-9]:[A-F0-9][A-F0-9]:[A-F0-9][A-F0-9]:[A-F0-9][A-F0-9]:[A-F0-9][A-F0-9]:[A-F0-9][A-F0-9]".toRegex()
 
+    companion object {
+        var PERIPHERAL_EXTRA: String = "com.github.martinfrank.sport.trainingbikeapp.MainActivity.periperal"
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.activity_main)
         consoleText = findViewById(R.id.consoleText)
         devicesText = findViewById(R.id.devicesText)
         peripheralText = findViewById(R.id.peripheralText)
-        val startScanButton = findViewById<Button>(R.id.startScanButton);
-        val stopScanButton = findViewById<Button>(R.id.stopScanButton);
-        val connectButton = findViewById<Button>(R.id.connectButton);
-        val disconnectButton = findViewById<Button>(R.id.disconnectButton);
+
+        recyclerView = findViewById(R.id.recyclerView)
+        recyclerView.layoutManager = LinearLayoutManager(this)
+        recyclerViewAdapter = MyAdapter(mutableListOf())
+        recyclerView.adapter = recyclerViewAdapter
+
+        val startScanButton = findViewById<Button>(R.id.startScanButton)
+        val stopScanButton = findViewById<Button>(R.id.stopScanButton)
+        val connectButton = findViewById<Button>(R.id.connectButton)
 
         //-----
         handlePermissions()
@@ -67,9 +79,9 @@ class MainActivity : BlueFalconDelegate, ComponentActivity() {
             try {
                 if (blueFalcon.isScanning) {
                     blueFalcon.stopScanning()
-                    consoleText.setText("stop scanning..." + Date(System.currentTimeMillis()) + "\n")
+                    consoleText.text = String.format("stop scanning... %s\n",  Date(System.currentTimeMillis()))
                 } else {
-                    consoleText.setText("already stopped scanning..." + Date(System.currentTimeMillis()) + "\n")
+                    consoleText.text = String.format("already stopped scanning... %s\n", Date(System.currentTimeMillis()))
                 }
             } catch (exception: Exception) {
                 consoleText.append("Exception " + exception.message + "\n")
@@ -77,10 +89,17 @@ class MainActivity : BlueFalconDelegate, ComponentActivity() {
         }
 
         connectButton.setOnClickListener {
-            blueFalcon.connect(trainingBike)
-        }
-        disconnectButton.setOnClickListener {
-            blueFalcon.disconnect(trainingBike)
+            val selected = recyclerViewAdapter.getSelectedItem()
+            if (blueFalcon.isScanning) {
+                blueFalcon.stopScanning()
+            }
+
+            val bundle = Bundle()
+            bundle.putParcelable(PERIPHERAL_EXTRA, selected)
+            val intent = Intent(this, BikeActivity::class.java)
+            intent.putExtras(bundle)
+            startActivity(intent)
+
         }
     }
 
@@ -93,20 +112,16 @@ class MainActivity : BlueFalconDelegate, ComponentActivity() {
         advertisementData: Map<AdvertisementDataRetrievalKeys, Any>
     ) {
         super.didDiscoverDevice(bluetoothPeripheral, advertisementData)
-        if(! devices.contains(bluetoothPeripheral.device)) {
-            devices += bluetoothPeripheral.device
+        if(! peripherals.contains(bluetoothPeripheral) && !uuidPattern.matches(bluetoothPeripheral.name!!)) {
+            peripherals += bluetoothPeripheral
         }
-        devicesText.setText("")
-        devices.forEach {
-            if(it.name != null && it.name != "") {
-                devicesText.append("device: " + it.name + "\n")
-            }
-        }
-
-        if(bluetoothPeripheral.device.name != null && bluetoothPeripheral.device.name.startsWith("JAS_C3A")){
-            trainingBike = bluetoothPeripheral
-            peripheralText.setText("")
-        }
+        recyclerViewAdapter.updateList(peripherals)
+//
+//
+//        if(bluetoothPeripheral.device.name != null && bluetoothPeripheral.device.name.startsWith("JAS_C3A")){
+//            trainingBike = bluetoothPeripheral
+//            peripheralText.setText("")
+//        }
     }
 
     override fun didConnect(bluetoothPeripheral: BluetoothPeripheral) {
@@ -219,5 +234,8 @@ class MainActivity : BlueFalconDelegate, ComponentActivity() {
             }
         }
     }
+
+
+
 
 }

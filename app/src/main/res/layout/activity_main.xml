@@ -25,10 +25,10 @@
             android:text="connect"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" android:id="@+id/connectButton"/>
-    <Button
-            android:text="disconnect"
+    <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recyclerView"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content" android:id="@+id/disconnectButton"/>
+            android:layout_height="wrap_content" />
     <TextView
             android:id="@+id/devicesText"
             android:layout_width="match_parent"
