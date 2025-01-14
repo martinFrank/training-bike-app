@@ -58,13 +58,11 @@ class BikeActivity : BlueFalconDelegate, AppCompatActivity() {
         bluetoothCharacteristic: BluetoothCharacteristic
     ) {
         super.didCharacteristcValueChanged(bluetoothPeripheral, bluetoothCharacteristic)
-        Log.d(MainActivity.LOG_TAG, "didCharacteristcValueChange value=${bluetoothCharacteristic.value?.toHexString()}")
         var charText = bluetoothCharacteristic.value?.toHexString()
-        parseData(charText.toString())
+        extractData(charText.toString())
     }
 
-    private fun parseData(dataString: String) {
-        Log.d(MainActivity.LOG_TAG, String.format("parseData : %s", dataString))
+    private fun extractData(dataString: String) {
         //d40900000000000000000000000000ffffff1200
         //d409c9054e0047000026000a000100ffffff2c00
         //d409a3054c002d000025000b000000ffffff1b00
@@ -72,22 +70,39 @@ class BikeActivity : BlueFalconDelegate, AppCompatActivity() {
         //0000000000111111111122222222223333333333
 //        sensorText = string
         if (dataString.length == 40) {
-            Log.d(MainActivity.LOG_TAG, "data string (36, 38) " + dataString.substring(36, 38))
-            val distance = dataString.substring(36, 38).toInt(16)
+            val distance = extractData(dataString, 36, 38)
             Log.d(MainActivity.LOG_TAG, "distance " + distance)
 
-            Log.d(MainActivity.LOG_TAG, "data string (16, 20) " + dataString.substring(16, 20))
-            val cadence = dataString.substring(16, 20).toInt(16)
+            val cadence = extractData(dataString, 16, 20)
             Log.d(MainActivity.LOG_TAG, "cadence " + cadence)
 
-            Log.d(MainActivity.LOG_TAG, "data string (20, 24) " + dataString.substring(20, 24))
-            val power = dataString.substring(20, 24).toInt(16)
+            val power = extractData(dataString, 20, 24)
             Log.d(MainActivity.LOG_TAG, "power " + power)
+
+            //???
+            val speed = extractData(dataString, 10, 14)
+            Log.d(MainActivity.LOG_TAG, "speed " + speed)
+
+            //???
+            val calories = extractData(dataString, 6, 10)
+            Log.d(MainActivity.LOG_TAG, "calories " + calories)
+
+            //???
+            val strange = extractData(dataString, 4, 6)
+            Log.d(MainActivity.LOG_TAG, "strange " + strange)
 
             sensorText = "distance : ${distance} [m] \n" +
                     "cadence : ${cadence} [RPM] \n" +
-                    "power : ${power} [W] \n"
+                    "power : ${power} [W] \n" +
+                    "speed : ${speed} [m/s] \n" +
+                    "calories : ${calories} [kcal] \n" +
+                    "strange : ${strange} [???] \n"
         }
+    }
+
+    private fun extractData(dataString: String, from: Int, to: Int) : Int {
+        Log.d(MainActivity.LOG_TAG, "data string ("+from+", "+to+") " + dataString.substring(from, to))
+        return dataString.substring(from, to).toInt(16)
     }
 
     @OptIn(ExperimentalUuidApi::class)
