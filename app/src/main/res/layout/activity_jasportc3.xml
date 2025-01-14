@@ -6,7 +6,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:fitsSystemWindows="true"
-        tools:context=".BikeActivity" android:orientation="vertical">
+        tools:context=".JaSportC3Activity" android:orientation="vertical">
 
     <TextView
             android:id="@+id/bikeText"
@@ -14,19 +14,6 @@
             android:layout_height="wrap_content"
             android:gravity="top"
             android:lines="6"
-            android:scrollbars="vertical"
-            android:textSize="16sp"
-            android:text="Gib hier deinen Text ein"/>
-    <Button
-            android:text="test"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" android:id="@+id/bikeButton"/>
-    <TextView
-            android:id="@+id/characteristicText"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="top"
-            android:lines="16"
             android:scrollbars="vertical"
             android:textSize="16sp"
             android:text="Gib hier deinen Text ein"/>

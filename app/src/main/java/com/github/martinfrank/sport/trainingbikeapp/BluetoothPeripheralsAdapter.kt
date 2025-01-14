@@ -8,7 +8,7 @@ import androidx.recyclerview.widget.RecyclerView
 import android.view.LayoutInflater
 import dev.bluefalcon.BluetoothPeripheral
 
-class MyAdapter(private val items: MutableList<BluetoothPeripheral>) : RecyclerView.Adapter<MyAdapter.ViewHolder>() {
+class BluetoothPeripheralsAdapter(private val items: MutableList<BluetoothPeripheral>) : RecyclerView.Adapter<BluetoothPeripheralsAdapter.ViewHolder>() {
 
     private var selectedPosition = -1
 
@@ -47,7 +47,10 @@ class MyAdapter(private val items: MutableList<BluetoothPeripheral>) : RecyclerV
         }
     }
 
-    fun getSelectedItem(): BluetoothPeripheral {
+    fun getSelectedItem(): BluetoothPeripheral? {
+        if (selectedPosition == -1 || items.isEmpty() ) {
+            return null
+        }
         return items[selectedPosition]
     }
 }

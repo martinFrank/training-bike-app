@@ -3,12 +3,10 @@ package com.github.martinfrank.sport.trainingbikeapp
 import android.annotation.SuppressLint
 import android.bluetooth.BluetoothAdapter
 import android.bluetooth.BluetoothManager
-import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Bundle
 import android.widget.Button
-import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.core.app.ActivityCompat
@@ -16,22 +14,18 @@ import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import dev.bluefalcon.*
-import java.util.*
 
 class MainActivity : BlueFalconDelegate, ComponentActivity() {
 
-    private lateinit var consoleText: TextView
-    private lateinit var devicesText: TextView
-    private lateinit var peripheralText: TextView
     private lateinit var blueFalcon: BlueFalcon
     private var peripherals = listOf<BluetoothPeripheral>()
     private lateinit var recyclerView: RecyclerView
-    private lateinit var recyclerViewAdapter: MyAdapter
+    private lateinit var recyclerViewAdapter: BluetoothPeripheralsAdapter
     private var uuidPattern =
         "[A-F0-9][A-F0-9]:[A-F0-9][A-F0-9]:[A-F0-9][A-F0-9]:[A-F0-9][A-F0-9]:[A-F0-9][A-F0-9]:[A-F0-9][A-F0-9]".toRegex()
 
     companion object {
-        var PERIPHERAL_EXTRA: String = "com.github.martinfrank.sport.trainingbikeapp.MainActivity.periperal"
+        var PERIPHERAL_EXTRA: String = "com.github.martinfrank.sport.trainingbikeapp.MainActivity.peripheral"
         var LOG_TAG: String = "com.github.martinfrank.sport.trainingbikeapp.logtag"
     }
 
@@ -39,13 +33,10 @@ class MainActivity : BlueFalconDelegate, ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-        consoleText = findViewById(R.id.consoleText)
-        devicesText = findViewById(R.id.devicesText)
-        peripheralText = findViewById(R.id.peripheralText)
 
         recyclerView = findViewById(R.id.recyclerView)
         recyclerView.layoutManager = LinearLayoutManager(this)
-        recyclerViewAdapter = MyAdapter(mutableListOf())
+        recyclerViewAdapter = BluetoothPeripheralsAdapter(mutableListOf())
         recyclerView.adapter = recyclerViewAdapter
 
         val connectButton = findViewById<Button>(R.id.connectButton)
@@ -56,11 +47,6 @@ class MainActivity : BlueFalconDelegate, ComponentActivity() {
         //-----
         blueFalcon = BlueFalcon(null, this.application, true)
         blueFalcon.delegates.add(this)
-        if (blueFalcon.isScanning) {
-            consoleText.text = String.format("already scanning... %s\n", Date(System.currentTimeMillis()))
-        } else {
-            consoleText.text = String.format("start scanning... %s\n", Date(System.currentTimeMillis()))
-        }
         blueFalcon.scan()
 
 
@@ -77,13 +63,11 @@ class MainActivity : BlueFalconDelegate, ComponentActivity() {
             blueFalcon.delegates.remove(this)
             val bundle = Bundle()
             bundle.putParcelable(PERIPHERAL_EXTRA, selected)
-            val intent = Intent(this, BikeActivity::class.java)
+            val intent = Intent(this, JaSportC3Activity::class.java)
             intent.putExtras(bundle)
             startActivity(intent)
-
         }
     }
-
 
     // ---------------------
 
@@ -103,7 +87,7 @@ class MainActivity : BlueFalconDelegate, ComponentActivity() {
     // ----------------------------------
 
     private fun checkBluetoothStatus() {
-        val bluetoothManager = getSystemService(Context.BLUETOOTH_SERVICE) as BluetoothManager
+        val bluetoothManager = getSystemService(BLUETOOTH_SERVICE) as BluetoothManager
         val bluetoothAdapter: BluetoothAdapter? = bluetoothManager.adapter
         if (bluetoothAdapter?.isEnabled == false) {
             Toast.makeText(this, "Bluetooth is not enabled", Toast.LENGTH_SHORT).show()
@@ -113,6 +97,7 @@ class MainActivity : BlueFalconDelegate, ComponentActivity() {
     // ----------------------------------
     private var permissionRequestCode = 4718
 
+    @SuppressLint("InlinedApi")
     private val requiredPermissions = arrayOf(
         android.Manifest.permission.BLUETOOTH,
         android.Manifest.permission.BLUETOOTH_ADMIN,
@@ -137,6 +122,19 @@ class MainActivity : BlueFalconDelegate, ComponentActivity() {
     }
 
 
+    override fun onResume() {
+        super.onResume()
+        blueFalcon.scan()
+    }
+
+    override fun onPause() {
+        super.onPause()
+        blueFalcon.stopScanning()
+
+    }
+
+
+    @Suppress("DEPRECATION")
     @Deprecated("Deprecated in Java")
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
@@ -149,6 +147,5 @@ class MainActivity : BlueFalconDelegate, ComponentActivity() {
             }
         }
     }
-
 
 }

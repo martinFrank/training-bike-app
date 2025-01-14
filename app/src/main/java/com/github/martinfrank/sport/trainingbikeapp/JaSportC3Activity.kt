@@ -4,7 +4,6 @@ import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import android.util.Log
-import android.widget.Button
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import dev.bluefalcon.BlueFalcon
@@ -15,15 +14,13 @@ import dev.bluefalcon.BluetoothService
 import kotlin.uuid.ExperimentalUuidApi
 import kotlin.uuid.Uuid
 
-class BikeActivity : BlueFalconDelegate, AppCompatActivity() {
+class JaSportC3Activity : BlueFalconDelegate, AppCompatActivity() {
 
     private lateinit var bikeText: TextView
-    private lateinit var characteristicText: TextView
     private lateinit var blueFalcon: BlueFalcon
     private lateinit var peripheral: BluetoothPeripheral
     private lateinit var ftmsService: BluetoothService
-    private var sensorText = "not measured"
-
+    private var sensorText = "initializing"
 
     private val handler = Handler(Looper.getMainLooper())
     private lateinit var runnable: Runnable
@@ -33,20 +30,17 @@ class BikeActivity : BlueFalconDelegate, AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        setContentView(R.layout.activity_bike)
+        setContentView(R.layout.activity_jasportc3)
         bikeText = findViewById(R.id.bikeText)
-        characteristicText = findViewById(R.id.characteristicText)
 
         startRepeatingTask(100)
 
         val bundle = intent.extras
         if (bundle != null) {
             peripheral = bundle.getParcelable(MainActivity.PERIPHERAL_EXTRA)!!
-            bikeText.text = peripheral.let { String.format("peripheral: %s", it.name) }
             blueFalcon = BlueFalcon(null, this.application, true)
             blueFalcon.delegates.add(this);
             blueFalcon.connect(peripheral)
-
             blueFalcon.discoverServices(peripheral, mutableListOf())
         }
 
@@ -70,37 +64,37 @@ class BikeActivity : BlueFalconDelegate, AppCompatActivity() {
         //0000000000111111111122222222223333333333
 //        sensorText = string
         if (dataString.length == 40) {
-            val distance = extractData(dataString, 36, 38)
-            Log.d(MainActivity.LOG_TAG, "distance " + distance)
+            val distance = extractSpecificData(dataString, 36, 38)
+            Log.d(MainActivity.LOG_TAG, "distance: $distance")
 
-            val cadence = extractData(dataString, 16, 20)
-            Log.d(MainActivity.LOG_TAG, "cadence " + cadence)
+            val cadence = extractSpecificData(dataString, 16, 20)
+            Log.d(MainActivity.LOG_TAG, "cadence: $cadence")
 
-            val power = extractData(dataString, 20, 24)
-            Log.d(MainActivity.LOG_TAG, "power " + power)
-
-            //???
-            val speed = extractData(dataString, 10, 14)
-            Log.d(MainActivity.LOG_TAG, "speed " + speed)
+            val power = extractSpecificData(dataString, 20, 24)
+            Log.d(MainActivity.LOG_TAG, "power: $power")
 
             //???
-            val calories = extractData(dataString, 6, 10)
-            Log.d(MainActivity.LOG_TAG, "calories " + calories)
+            val speed = extractSpecificData(dataString, 10, 14)
+            Log.d(MainActivity.LOG_TAG, "speed: $speed")
 
             //???
-            val strange = extractData(dataString, 4, 6)
-            Log.d(MainActivity.LOG_TAG, "strange " + strange)
+            val calories = extractSpecificData(dataString, 6, 10)
+            Log.d(MainActivity.LOG_TAG, "calories: $calories")
 
-            sensorText = "distance : ${distance} [m] \n" +
-                    "cadence : ${cadence} [RPM] \n" +
-                    "power : ${power} [W] \n" +
-                    "speed : ${speed} [m/s] \n" +
-                    "calories : ${calories} [kcal] \n" +
-                    "strange : ${strange} [???] \n"
+            //???
+            val strange = extractSpecificData(dataString, 4, 6)
+            Log.d(MainActivity.LOG_TAG, "strange: $strange")
+
+            sensorText = "distance : $distance [m] \n" +
+                    "cadence : $cadence [RPM] \n" +
+                    "power : $power [W] \n" +
+                    "speed : $speed [m/s] \n" +
+                    "calories : $calories [kcal] \n" +
+                    "strange : $strange [???] \n"
         }
     }
 
-    private fun extractData(dataString: String, from: Int, to: Int) : Int {
+    private fun extractSpecificData(dataString: String, from: Int, to: Int) : Int {
         Log.d(MainActivity.LOG_TAG, "data string ("+from+", "+to+") " + dataString.substring(from, to))
         return dataString.substring(from, to).toInt(16)
     }
@@ -139,5 +133,19 @@ class BikeActivity : BlueFalconDelegate, AppCompatActivity() {
 
     fun stopRepeatingTask() {
         handler.removeCallbacks(runnable)
+    }
+
+    @OptIn(ExperimentalUuidApi::class)
+    override fun onResume() {
+        super.onResume()
+        blueFalcon.connect(peripheral)
+        blueFalcon.discoverServices(peripheral, mutableListOf())
+    }
+
+    override fun onPause() {
+        super.onPause()
+        stopRepeatingTask()
+        blueFalcon.disconnect(peripheral)
+
     }
 }
