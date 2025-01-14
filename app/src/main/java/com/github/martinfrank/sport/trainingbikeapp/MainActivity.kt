@@ -129,6 +129,7 @@ class MainActivity : BlueFalconDelegate, ComponentActivity() {
 
     override fun onPause() {
         super.onPause()
+        recyclerViewAdapter.updateList(mutableListOf())
         blueFalcon.stopScanning()
 
     }
