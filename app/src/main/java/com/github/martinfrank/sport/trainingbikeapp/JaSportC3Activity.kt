@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import android.util.Log
+import android.view.WindowManager
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import dev.bluefalcon.BlueFalcon
@@ -23,9 +24,11 @@ class JaSportC3Activity : BlueFalconDelegate, AppCompatActivity() {
     private var sensorText = "initializing"
 
     private val handler = Handler(Looper.getMainLooper())
-    private lateinit var runnable: Runnable
+    private lateinit var uiRefreshRunnable: Runnable
 
 
+    @Suppress("DEPRECATION")
+    @Deprecated("Deprecated in Java")
     @OptIn(ExperimentalUuidApi::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -33,13 +36,16 @@ class JaSportC3Activity : BlueFalconDelegate, AppCompatActivity() {
         setContentView(R.layout.activity_jasportc3)
         bikeText = findViewById(R.id.bikeText)
 
-        startRepeatingTask(100)
+        // Prevent the screen from timing out
+        window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+
+        startUiRefreshTread(100)
 
         val bundle = intent.extras
         if (bundle != null) {
             peripheral = bundle.getParcelable(MainActivity.PERIPHERAL_EXTRA)!!
             blueFalcon = BlueFalcon(null, this.application, true)
-            blueFalcon.delegates.add(this);
+            blueFalcon.delegates.add(this)
             blueFalcon.connect(peripheral)
             blueFalcon.discoverServices(peripheral, mutableListOf())
         }
@@ -100,7 +106,7 @@ class JaSportC3Activity : BlueFalconDelegate, AppCompatActivity() {
     }
 
     @OptIn(ExperimentalUuidApi::class)
-    private val uuid = Uuid.parse("00001826-0000-1000-8000-00805f9b34fb");
+    private val uuid = Uuid.parse("00001826-0000-1000-8000-00805f9b34fb")
 
     @OptIn(ExperimentalUuidApi::class, ExperimentalStdlibApi::class)
     override fun didDiscoverServices(bluetoothPeripheral: BluetoothPeripheral) {
@@ -114,11 +120,14 @@ class JaSportC3Activity : BlueFalconDelegate, AppCompatActivity() {
                 }
             }
         }
-
     }
 
-    fun startRepeatingTask(interval: Long) {
-        runnable = object : Runnable {
+    override fun didDisconnect(bluetoothPeripheral: BluetoothPeripheral) {
+        super.didDisconnect(bluetoothPeripheral)
+    }
+
+    fun startUiRefreshTread(interval: Long) {
+        uiRefreshRunnable = object : Runnable {
             override fun run() {
                 // Your repeating task code here
                 if (bikeText.text != sensorText) {
@@ -128,11 +137,11 @@ class JaSportC3Activity : BlueFalconDelegate, AppCompatActivity() {
                 handler.postDelayed(this, interval)
             }
         }
-        handler.post(runnable)
+        handler.post(uiRefreshRunnable)
     }
 
     fun stopRepeatingTask() {
-        handler.removeCallbacks(runnable)
+        handler.removeCallbacks(uiRefreshRunnable)
     }
 
     @OptIn(ExperimentalUuidApi::class)

@@ -1,11 +1,11 @@
 package com.github.martinfrank.sport.trainingbikeapp
 
+import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.RadioButton
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
-import android.view.LayoutInflater
 import dev.bluefalcon.BluetoothPeripheral
 
 class BluetoothPeripheralsAdapter(private val items: MutableList<BluetoothPeripheral>) : RecyclerView.Adapter<BluetoothPeripheralsAdapter.ViewHolder>() {
@@ -22,6 +22,8 @@ class BluetoothPeripheralsAdapter(private val items: MutableList<BluetoothPeriph
         return ViewHolder(view)
     }
 
+    @Suppress("DEPRECATION")
+    @Deprecated("Deprecated in Java")
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         holder.textView.text = items[position].name
         holder.radioButton.isChecked = position == selectedPosition
