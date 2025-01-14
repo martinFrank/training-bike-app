@@ -13,7 +13,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="top"
-            android:lines="4"
+            android:lines="6"
             android:scrollbars="vertical"
             android:textSize="16sp"
             android:text="Gib hier deinen Text ein"/>
@@ -21,5 +21,14 @@
             android:text="test"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" android:id="@+id/bikeButton"/>
+    <TextView
+            android:id="@+id/characteristicText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="top"
+            android:lines="16"
+            android:scrollbars="vertical"
+            android:textSize="16sp"
+            android:text="Gib hier deinen Text ein"/>
 
 </LinearLayout>

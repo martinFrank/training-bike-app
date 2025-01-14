@@ -14,14 +14,6 @@
             android:textSize="16sp"
             android:text="Gib hier deinen Text ein"/>
     <Button
-            android:text="start scan"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" android:id="@+id/startScanButton"/>
-    <Button
-            android:text="stop scan"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" android:id="@+id/stopScanButton"/>
-    <Button
             android:text="connect"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" android:id="@+id/connectButton"/>
