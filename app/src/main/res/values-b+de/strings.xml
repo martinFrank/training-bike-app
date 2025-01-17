@@ -5,18 +5,18 @@
     <string name="second_fragment_label">Second Fragment</string>
     <string name="next">Next</string>
     <string name="previous">Previous</string>
-    <string name="go_fishing_button">go fishing</string>
+    <string name="go_fishing_button">fischen gehen</string>
 
-    <string name="fishing_task_rowing">rowing to fishing spot</string>
-    <string name="fishing_task_tossing_line">tossing line</string>
-    <string name="fishing_task_pull_catch">pulling the fish and catch it</string>
-    <string name="fishing_event_fine_progress">making fine progress</string>
-    <string name="fishing_event_contrary_wind">contrary wind - you are blown back</string>
-    <string name="fishing_event_tailwind">tailwind - you are make much progress</string>
-    <string name="fishing_event_counter_current">counter current - put in some extra effort</string>
-    <string name="fishing_event_up_current">up current - that helps to make progress</string>
-    <string name="fishing_event_outburst">fish outburst - struggle and fight!</string>
-    <string name="fishing_event_victory">victory - you caught a fish!</string>
+    <string name="fishing_task_rowing">Zum Angelplatz rudern</string>
+    <string name="fishing_task_tossing_line">Leine auswerfen</string>
+    <string name="fishing_task_pull_catch">Fisch einholen</string>
+    <string name="fishing_event_fine_progress">Alles läuft gut</string>
+    <string name="fishing_event_contrary_wind">Gegenwind - es braucht extra Kraft</string>
+    <string name="fishing_event_tailwind">Rückenwind - es läuft leichter</string>
+    <string name="fishing_event_counter_current">Gegenströmung - es braucht extra Kraft</string>
+    <string name="fishing_event_up_current">Aufströmung - es geht leichter</string>
+    <string name="fishing_event_outburst">Fish-Angriff - kämpfe und gib alles!</string>
+    <string name="fishing_event_victory">Sieg - du hast einen Fisch gefangen!</string>
 
     <string name="lorem_ipsum">
         Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam in scelerisque sem. Mauris volutpat, dolor id

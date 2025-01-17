@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- res/drawable/frame_animation.xml -->
+<animation-list xmlns:android="http://schemas.android.com/apk/res/android" android:oneshot="true">
+    <item android:drawable="@drawable/animation_frame_pulling_00" android:duration="500"/>
+    <item android:drawable="@drawable/animation_frame_pulling_01" android:duration="500"/>
+    <item android:drawable="@drawable/animation_frame_pulling_02" android:duration="500"/>
+    <item android:drawable="@drawable/animation_frame_pulling_03" android:duration="500"/>
+    <item android:drawable="@drawable/animation_frame_pulling_05" android:duration="500"/>
+    <item android:drawable="@drawable/animation_frame_pulling_05" android:duration="500" android:animation="@anim/test_rotate"/>
+</animation-list>

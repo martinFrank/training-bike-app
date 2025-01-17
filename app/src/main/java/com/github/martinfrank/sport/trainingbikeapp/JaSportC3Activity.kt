@@ -4,8 +4,12 @@ import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import android.util.Log
+import android.view.View
 import android.view.WindowManager
+import android.widget.Button
+import android.widget.LinearLayout
 import android.widget.TextView
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import dev.bluefalcon.BlueFalcon
 import dev.bluefalcon.BlueFalconDelegate
@@ -17,11 +21,24 @@ import kotlin.uuid.Uuid
 
 class JaSportC3Activity : BlueFalconDelegate, AppCompatActivity() {
 
-    private lateinit var bikeText: TextView
+    private lateinit var bikeSensorData: TextView
+
+
     private lateinit var blueFalcon: BlueFalcon
     private lateinit var peripheral: BluetoothPeripheral
     private lateinit var ftmsService: BluetoothService
+    private val tick = 50L
     private var sensorText = "initializing"
+
+    private lateinit var fishGameRenderer: FishingGameRenderer
+    private var fishingGame = FishingGame()
+
+    private var distance = 0
+    private var cadence = 0
+    private var power = 0
+    private var speed = 0
+    private var calories = 0
+    private var strange = 0
 
     private val handler = Handler(Looper.getMainLooper())
     private lateinit var uiRefreshRunnable: Runnable
@@ -34,12 +51,18 @@ class JaSportC3Activity : BlueFalconDelegate, AppCompatActivity() {
         super.onCreate(savedInstanceState)
 
         setContentView(R.layout.activity_jasportc3)
-        bikeText = findViewById(R.id.bikeText)
+        bikeSensorData = findViewById(R.id.bikeSensorData)
 
         // Prevent the screen from timing out
         window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
 
-        startUiRefreshTread(100)
+        var fishingParent = findViewById<LinearLayout>(R.id.fishingParent)
+        fishingParent.findViewById<Button>(R.id.startFishing).setOnClickListener(View.OnClickListener {
+            fishingGame.reset()
+        })
+        fishGameRenderer = FishingGameRenderer(fishingParent)
+
+        startUiRefreshTread(tick)
 
         val bundle = intent.extras
         if (bundle != null) {
@@ -70,25 +93,25 @@ class JaSportC3Activity : BlueFalconDelegate, AppCompatActivity() {
         //0000000000111111111122222222223333333333
 //        sensorText = string
         if (dataString.length == 40) {
-            val distance = extractSpecificData(dataString, 36, 38)
+            distance = extractSpecificData(dataString, 36, 38)
             Log.d(MainActivity.LOG_TAG, "distance: $distance")
 
-            val cadence = extractSpecificData(dataString, 16, 20)
+            cadence = extractSpecificData(dataString, 16, 20)
             Log.d(MainActivity.LOG_TAG, "cadence: $cadence")
 
-            val power = extractSpecificData(dataString, 20, 24)
+            power = extractSpecificData(dataString, 20, 24)
             Log.d(MainActivity.LOG_TAG, "power: $power")
 
             //???
-            val speed = extractSpecificData(dataString, 10, 14)
+            speed = extractSpecificData(dataString, 10, 14)
             Log.d(MainActivity.LOG_TAG, "speed: $speed")
 
             //???
-            val calories = extractSpecificData(dataString, 6, 10)
+            calories = extractSpecificData(dataString, 6, 10)
             Log.d(MainActivity.LOG_TAG, "calories: $calories")
 
             //???
-            val strange = extractSpecificData(dataString, 4, 6)
+            strange = extractSpecificData(dataString, 4, 6)
             Log.d(MainActivity.LOG_TAG, "strange: $strange")
 
             sensorText = "distance : $distance [m] \n" +
@@ -100,8 +123,8 @@ class JaSportC3Activity : BlueFalconDelegate, AppCompatActivity() {
         }
     }
 
-    private fun extractSpecificData(dataString: String, from: Int, to: Int) : Int {
-        Log.d(MainActivity.LOG_TAG, "data string ("+from+", "+to+") " + dataString.substring(from, to))
+    private fun extractSpecificData(dataString: String, from: Int, to: Int): Int {
+        Log.d(MainActivity.LOG_TAG, "data string (" + from + ", " + to + ") " + dataString.substring(from, to))
         return dataString.substring(from, to).toInt(16)
     }
 
@@ -124,18 +147,26 @@ class JaSportC3Activity : BlueFalconDelegate, AppCompatActivity() {
 
     override fun didDisconnect(bluetoothPeripheral: BluetoothPeripheral) {
         super.didDisconnect(bluetoothPeripheral)
+        Toast.makeText(this, "Bluetooth connection lost", Toast.LENGTH_SHORT).show()
+        finish()
     }
 
     fun startUiRefreshTread(interval: Long) {
         uiRefreshRunnable = object : Runnable {
             override fun run() {
                 // Your repeating task code here
-                if (bikeText.text != sensorText) {
-                    bikeText.text = sensorText
+                if (bikeSensorData.text != sensorText) {
+                    bikeSensorData.text = sensorText
                 }
+//                tickFishingGame(interval)
+                fishingGame.tick(interval, distance, cadence, power, speed, calories, strange)
+//                updateUi()
+                fishGameRenderer.render(fishingGame)
+
                 // Schedule the next execution
                 handler.postDelayed(this, interval)
             }
+
         }
         handler.post(uiRefreshRunnable)
     }
@@ -147,6 +178,7 @@ class JaSportC3Activity : BlueFalconDelegate, AppCompatActivity() {
     @OptIn(ExperimentalUuidApi::class)
     override fun onResume() {
         super.onResume()
+        startUiRefreshTread(tick)
         blueFalcon.connect(peripheral)
         blueFalcon.discoverServices(peripheral, mutableListOf())
     }
@@ -155,6 +187,6 @@ class JaSportC3Activity : BlueFalconDelegate, AppCompatActivity() {
         super.onPause()
         stopRepeatingTask()
         blueFalcon.disconnect(peripheral)
-
     }
+
 }

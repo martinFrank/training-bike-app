@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              android:orientation="vertical">
+
+    <Button
+            android:text="@string/go_fishing_button"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" android:id="@+id/startFishing"/>
+
+    <TextView
+            android:text="@string/fishing_task_rowing"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:lines="2"
+            android:scrollbars="vertical"
+            android:gravity="center_vertical"
+            android:textSize="16sp"
+            android:padding="10dp"
+            android:id="@+id/textCurrentTask"/>
+
+    <include android:layout_width="match_parent"
+             android:layout_height="wrap_content"
+             android:id="@+id/fishing_progress_task1"
+             layout="@layout/fishing_progress"/>
+
+    <include android:layout_width="match_parent"
+             android:layout_height="wrap_content"
+             android:id="@+id/fishing_progress_task2"
+             layout="@layout/fishing_progress"/>
+
+    <include android:layout_width="match_parent"
+             android:layout_height="wrap_content"
+             android:id="@+id/fishing_progress_task3"
+             layout="@layout/fishing_progress"/>
+
+    <include android:layout_width="match_parent"
+             android:layout_height="wrap_content"
+             android:id="@+id/fishing_event"
+             layout="@layout/fishing_event"/>
+
+    <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:background="@drawable/background_sea_05"
+            android:adjustViewBounds="true"
+            android:contentDescription="fishing image"
+            android:scaleType="fitCenter"
+            android:layout_gravity="center_horizontal"
+            android:id="@+id/fishingImage"/>
+
+
+</LinearLayout>

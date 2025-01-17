@@ -7,10 +7,10 @@
     <ImageView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:src="@drawable/jasportc3"
+            android:src="@drawable/image_jasport_c3"
             android:adjustViewBounds="true"
             android:scaleType="centerCrop"
-            android:id="@+id/imageView"/>
+            android:id="@+id/fishingImage"/>
     <Button
             android:text="connect"
             android:layout_width="match_parent"
