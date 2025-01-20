@@ -13,6 +13,7 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.github.martinfrank.sport.trainingbikeapp.fishing.FishingActivity
 import dev.bluefalcon.*
 
 class MainActivity : BlueFalconDelegate, ComponentActivity() {
@@ -63,7 +64,7 @@ class MainActivity : BlueFalconDelegate, ComponentActivity() {
             blueFalcon.delegates.remove(this)
             val bundle = Bundle()
             bundle.putParcelable(PERIPHERAL_EXTRA, selected)
-            val intent = Intent(this, JaSportC3Activity::class.java)
+            val intent = Intent(this, FishingActivity::class.java)
             intent.putExtras(bundle)
             startActivity(intent)
         }

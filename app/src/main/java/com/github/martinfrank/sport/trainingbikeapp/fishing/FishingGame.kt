@@ -1,4 +1,4 @@
-package com.github.martinfrank.sport.trainingbikeapp
+package com.github.martinfrank.sport.trainingbikeapp.fishing
 
 class FishingGame {
 

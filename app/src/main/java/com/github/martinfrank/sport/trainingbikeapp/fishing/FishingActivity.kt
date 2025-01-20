@@ -1,4 +1,4 @@
-package com.github.martinfrank.sport.trainingbikeapp
+package com.github.martinfrank.sport.trainingbikeapp.fishing
 
 import android.os.Bundle
 import android.os.Handler
@@ -11,6 +11,8 @@ import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import com.github.martinfrank.sport.trainingbikeapp.MainActivity
+import com.github.martinfrank.sport.trainingbikeapp.R
 import dev.bluefalcon.BlueFalcon
 import dev.bluefalcon.BlueFalconDelegate
 import dev.bluefalcon.BluetoothCharacteristic
@@ -19,7 +21,7 @@ import dev.bluefalcon.BluetoothService
 import kotlin.uuid.ExperimentalUuidApi
 import kotlin.uuid.Uuid
 
-class JaSportC3Activity : BlueFalconDelegate, AppCompatActivity() {
+class FishingActivity : BlueFalconDelegate, AppCompatActivity() {
 
     private lateinit var bikeSensorData: TextView
 
@@ -66,7 +68,7 @@ class JaSportC3Activity : BlueFalconDelegate, AppCompatActivity() {
 
         val bundle = intent.extras
         if (bundle != null) {
-            peripheral = bundle.getParcelable(MainActivity.PERIPHERAL_EXTRA)!!
+            peripheral = bundle.getParcelable(MainActivity.Companion.PERIPHERAL_EXTRA)!!
             blueFalcon = BlueFalcon(null, this.application, true)
             blueFalcon.delegates.add(this)
             blueFalcon.connect(peripheral)
@@ -94,25 +96,25 @@ class JaSportC3Activity : BlueFalconDelegate, AppCompatActivity() {
 //        sensorText = string
         if (dataString.length == 40) {
             distance = extractSpecificData(dataString, 36, 38)
-            Log.d(MainActivity.LOG_TAG, "distance: $distance")
+            Log.d(MainActivity.Companion.LOG_TAG, "distance: $distance")
 
             cadence = extractSpecificData(dataString, 16, 20)
-            Log.d(MainActivity.LOG_TAG, "cadence: $cadence")
+            Log.d(MainActivity.Companion.LOG_TAG, "cadence: $cadence")
 
             power = extractSpecificData(dataString, 20, 24)
-            Log.d(MainActivity.LOG_TAG, "power: $power")
+            Log.d(MainActivity.Companion.LOG_TAG, "power: $power")
 
             //???
             speed = extractSpecificData(dataString, 10, 14)
-            Log.d(MainActivity.LOG_TAG, "speed: $speed")
+            Log.d(MainActivity.Companion.LOG_TAG, "speed: $speed")
 
             //???
             calories = extractSpecificData(dataString, 6, 10)
-            Log.d(MainActivity.LOG_TAG, "calories: $calories")
+            Log.d(MainActivity.Companion.LOG_TAG, "calories: $calories")
 
             //???
             strange = extractSpecificData(dataString, 4, 6)
-            Log.d(MainActivity.LOG_TAG, "strange: $strange")
+            Log.d(MainActivity.Companion.LOG_TAG, "strange: $strange")
 
             sensorText = "distance : $distance [m] \n" +
                     "cadence : $cadence [RPM] \n" +
@@ -124,7 +126,7 @@ class JaSportC3Activity : BlueFalconDelegate, AppCompatActivity() {
     }
 
     private fun extractSpecificData(dataString: String, from: Int, to: Int): Int {
-        Log.d(MainActivity.LOG_TAG, "data string (" + from + ", " + to + ") " + dataString.substring(from, to))
+        Log.d(MainActivity.Companion.LOG_TAG, "data string (" + from + ", " + to + ") " + dataString.substring(from, to))
         return dataString.substring(from, to).toInt(16)
     }
 
@@ -135,7 +137,7 @@ class JaSportC3Activity : BlueFalconDelegate, AppCompatActivity() {
     override fun didDiscoverServices(bluetoothPeripheral: BluetoothPeripheral) {
         super.didDiscoverServices(bluetoothPeripheral)
         bluetoothPeripheral.services.forEach { it ->
-            Log.d(MainActivity.LOG_TAG, "Discovered ${it.key}, ${it.value.name} services")
+            Log.d(MainActivity.Companion.LOG_TAG, "Discovered ${it.key}, ${it.value.name} services")
             if (it.key == uuid) {
                 ftmsService = it.value
                 ftmsService.characteristics.forEach { characteristic ->

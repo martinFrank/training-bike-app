@@ -6,7 +6,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:fitsSystemWindows="true"
-        tools:context=".JaSportC3Activity" android:orientation="vertical">
+        tools:context=".fishing.FishingActivity" android:orientation="vertical">
 
     <TextView
             android:id="@+id/bikeSensorData"

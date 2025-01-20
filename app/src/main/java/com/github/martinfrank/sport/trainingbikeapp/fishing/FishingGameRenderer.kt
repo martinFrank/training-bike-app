@@ -1,4 +1,4 @@
-package com.github.martinfrank.sport.trainingbikeapp
+package com.github.martinfrank.sport.trainingbikeapp.fishing
 
 import android.graphics.drawable.AnimationDrawable
 import android.widget.CheckBox
@@ -6,6 +6,7 @@ import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.ProgressBar
 import android.widget.TextView
+import com.github.martinfrank.sport.trainingbikeapp.R
 
 class FishingGameRenderer (fishingGameRootLayout: LinearLayout) {
 
